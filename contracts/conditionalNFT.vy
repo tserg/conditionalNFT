@@ -10,6 +10,12 @@ from vyper.interfaces import ERC721
 
 implements: ERC721
 
+# Interface for the Lock Contract
+interface Lock:
+	def getHasValidKey(
+		_address: address
+	) -> bool: view
+
 # Interface for the contract called by safeTransferFrom()
 interface ERC721Receiver:
     def onERC721Received(
@@ -68,6 +74,9 @@ tokenName: String[64]
 tokenSymbol: String[32]
 baseTokenURI: String[128]
 
+# @dev Address of the Lock contract that forms the condition for transferring and receiving this NFT
+lockAddress: address
+
 # @dev Mapping from NFT ID to the address that owns it.
 idToOwner: HashMap[uint256, address]
 
@@ -94,7 +103,7 @@ ERC721_INTERFACE_ID: constant(bytes32) = 0x0000000000000000000000000000000000000
 
 
 @external
-def __init__(_name: String[64], _symbol: String[32], _tokenURI: String[128]):
+def __init__(_name: String[64], _symbol: String[32], _tokenURI: String[128], _lockAddress: address):
     """
     @dev Contract constructor.
     """
@@ -104,6 +113,7 @@ def __init__(_name: String[64], _symbol: String[32], _tokenURI: String[128]):
     self.tokenName = _name
     self.tokenSymbol = _symbol
     self.baseTokenURI = _tokenURI
+    self.lockAddress = _lockAddress
 
 
 @view
