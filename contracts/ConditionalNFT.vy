@@ -83,6 +83,16 @@ event ApprovalForAll:
     operator: indexed(address)
     approved: bool
 
+# @dev This emits when a purchase is made.
+# @param _purchaser Purchaser of NFT.
+# @param _tokenId ID of token purchased
+# @param _value Amount paid
+# revoked).
+event Purchase:
+    purchaser: indexed(address)
+    tokenId: indexed(uint256)
+    value: uint256
+
 tokenName: String[64]
 tokenSymbol: String[32]
 baseTokenURI: String[128]
@@ -92,6 +102,12 @@ tokenId: uint256
 
 # @dev Maximum supply of token
 maxSupply: public(uint256)
+
+# @dev Minimum price of token
+minPrice: public(uint256)
+
+# @dev Beneficiary for withdrawal of funds
+beneficiary: address
 
 # @dev count of burnt tokens
 burntCount: uint256
@@ -142,7 +158,7 @@ ERC721_METADATA_INTERFACE_ID: constant(bytes32) = 0x0000000000000000000000000000
 ERC721_ENUMERABLE_INTERFACE_ID: constant(bytes32) = 0x00000000000000000000000000000000000000000000000000000000780e9d63
 
 @external
-def __init__(_name: String[64], _symbol: String[32], _tokenURI: String[128], _maxSupply: uint256, _lockAddress: address):
+def __init__(_name: String[64], _symbol: String[32], _tokenURI: String[128], _maxSupply: uint256, _minPrice: uint256, _lockAddress: address):
     """
     @dev Contract constructor.
     """
@@ -158,6 +174,8 @@ def __init__(_name: String[64], _symbol: String[32], _tokenURI: String[128], _ma
     self.tokenId = 0
     self.burntCount = 0
     self.maxSupply = _maxSupply
+    self.minPrice = _minPrice
+    self.beneficiary = msg.sender
 
 @view
 @internal
@@ -590,6 +608,27 @@ def mint(_to: address) -> bool:
     assert msg.sender == self.minter
 
     return self._mint(_to)
+
+@payable
+@external
+def purchase() -> bool:
+	"""
+	@dev Function to purchase a token
+		 Throws if `_value` is less than `self.minPrice`
+	@return Boolean indicating if operation was successful
+	"""
+	assert msg.value >= self.minPrice
+	self._mint(msg.sender)
+	log Purchase(msg.sender, self.tokenId, msg.value)
+	return True
+
+@external
+def withdraw():
+    """
+    @dev Function to withdraw funds
+         Throws if `msg.sender` is not `self.admin`
+    """
+    send(self.beneficiary, self.balance)
 
 @external
 def burn(_tokenId: uint256):

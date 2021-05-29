@@ -9,4 +9,4 @@ from brownie import ConditionalNFT, accounts
 
 def main():
 	acct = accounts.load('deployment_account')
-	ConditionalNFT.deploy('conditionalNFT', 'cNFT', 'Placeholder', 1, LOCK_ADDRESS, {'from': acct})
+	ConditionalNFT.deploy('conditionalNFT', 'cNFT', 'Placeholder', 1, 1e18, LOCK_ADDRESS, {'from': acct})
