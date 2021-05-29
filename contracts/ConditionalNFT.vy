@@ -158,9 +158,32 @@ ERC721_METADATA_INTERFACE_ID: constant(bytes32) = 0x0000000000000000000000000000
 ERC721_ENUMERABLE_INTERFACE_ID: constant(bytes32) = 0x00000000000000000000000000000000000000000000000000000000780e9d63
 
 @external
-def __init__(_name: String[64], _symbol: String[32], _tokenURI: String[128], _maxSupply: uint256, _minPrice: uint256, _lockAddress: address):
+def __init__():
+	pass
+
+@external
+@nonreentrant('lock')
+def initialize(
+	    _name: String[64],
+		_symbol: String[32],
+		_tokenURI: String[128],
+		_maxSupply: uint256,
+		_minPrice: uint256,
+		_lockAddress: address,
+		_minter: address,
+		_beneficiary: address
+	) -> bool:
     """
-    @dev Contract constructor.
+    @notice Initialize the NFT contract
+	@dev Separate from `__init__` method to facilitate factory pattern in `ConditionalNFTFactory`
+	@param _name Name of the token
+	@param _symbol Symbol of the token
+	@param _tokenURI URI of the token metadata
+	@param _maxSupply Maximum supply of the token
+	@param _minPrice Minimum price of the token
+	@param _lockAddress Address of the Lock contract that is condition for holding, transferring and receiving token
+	@param _minter Address which can mint tokens
+	@param _beneficiary Address which funds will be withdrawn to
     """
     self.supportedInterfaces[ERC165_INTERFACE_ID] = True
     self.supportedInterfaces[ERC721_INTERFACE_ID] = True
@@ -175,7 +198,9 @@ def __init__(_name: String[64], _symbol: String[32], _tokenURI: String[128], _ma
     self.burntCount = 0
     self.maxSupply = _maxSupply
     self.minPrice = _minPrice
-    self.beneficiary = msg.sender
+    self.beneficiary = _beneficiary
+
+    return True
 
 @view
 @internal
