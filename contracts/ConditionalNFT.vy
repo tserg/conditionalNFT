@@ -90,6 +90,9 @@ baseTokenURI: String[128]
 # @dev current count of token
 tokenId: uint256
 
+# @dev Maximum supply of token
+maxSupply: public(uint256)
+
 # @dev count of burnt tokens
 burntCount: uint256
 
@@ -139,7 +142,7 @@ ERC721_METADATA_INTERFACE_ID: constant(bytes32) = 0x0000000000000000000000000000
 ERC721_ENUMERABLE_INTERFACE_ID: constant(bytes32) = 0x00000000000000000000000000000000000000000000000000000000780e9d63
 
 @external
-def __init__(_name: String[64], _symbol: String[32], _tokenURI: String[128], _lockAddress: address):
+def __init__(_name: String[64], _symbol: String[32], _tokenURI: String[128], _maxSupply: uint256, _lockAddress: address):
     """
     @dev Contract constructor.
     """
@@ -154,6 +157,7 @@ def __init__(_name: String[64], _symbol: String[32], _tokenURI: String[128], _lo
     self.lockContract = Lock(_lockAddress)
     self.tokenId = 0
     self.burntCount = 0
+    self.maxSupply = _maxSupply
 
 @view
 @internal
@@ -301,6 +305,22 @@ def getLockAddress() -> address:
 	"""
 	return self.lockContract.address
 
+@view
+@internal
+def _isUnlocked(_from: address) -> bool:
+	"""
+	@dev Returns 'True' if address has a Lock and can transfer a token, otherwise 'False'
+	"""
+	return self.lockContract.getHasValidKey(_from)
+
+@view
+@external
+def isUnlocked(_from: address) -> bool:
+	"""
+	@dev Returns 'True' if address has a Lock and can transfer a token, otherwise 'False'
+	"""
+	return self._isUnlocked(_from)
+
 ### TRANSFER FUNCTION HELPERS ###
 
 @view
@@ -427,6 +447,9 @@ def _transferFrom(_from: address, _to: address, _tokenId: uint256, _sender: addr
     assert self._isApprovedOrOwner(_sender, _tokenId)
     # Throws if `_to` is the zero address
     assert _to != ZERO_ADDRESS
+	# Check if both sender and receiver are unlocked (i.e. has a lock)
+    #assert self._isUnlocked(_from)
+    #assert self._isUnlocked(_to)
     # Clear approval. Throws if `_from` is not the current owner
     self._clearApproval(_from, _tokenId)
     # Remove NFT. Throws if `_tokenId` is not a valid NFT
@@ -527,6 +550,32 @@ def setApprovalForAll(_operator: address, _approved: bool):
 
 ### MINT & BURN FUNCTIONS ###
 
+@internal
+def _mint(_to: address) -> bool:
+    """
+    @dev Function to mint tokens
+         Throws if `_to` is zero address.
+         Throws if `_tokenId` is owned by someone.
+    @param _to The address that will receive the minted tokens.
+    @return A boolean that indicates if the operation was successful.
+    """
+    # Throws if `_to` is zero address
+    assert _to != ZERO_ADDRESS
+	# Throws if '_tokenId' is equal to or greater than 'self.maxSupply'
+    assert self.tokenId < self.maxSupply
+	# Throws if '_to' is not unlocked
+	#assert self.isUnlocked(_to)
+    # Add NFT. Throws if `_tokenId` is owned by someone
+    self.tokenId += 1
+    _tokenId: uint256 = self.tokenId
+    self._addTokenTo(_to, _tokenId)
+    current_index: uint256 = self._totalSupply() - self.burntCount
+    self.indexToTokenId[current_index] = _tokenId
+    self.tokenIdToIndex[_tokenId] = current_index
+    log Transfer(ZERO_ADDRESS, _to, _tokenId)
+
+    return True
+
 @external
 def mint(_to: address) -> bool:
     """
@@ -539,17 +588,8 @@ def mint(_to: address) -> bool:
     """
     # Throws if `msg.sender` is not the minter
     assert msg.sender == self.minter
-    # Throws if `_to` is zero address
-    assert _to != ZERO_ADDRESS
-    # Add NFT. Throws if `_tokenId` is owned by someone
-    self.tokenId += 1
-    _tokenId: uint256 = self.tokenId
-    self._addTokenTo(_to, _tokenId)
-    current_index: uint256 = self._totalSupply() - self.burntCount
-    self.indexToTokenId[current_index] = _tokenId
-    self.tokenIdToIndex[_tokenId] = current_index
-    log Transfer(ZERO_ADDRESS, _to, _tokenId)
-    return True
+
+    return self._mint(_to)
 
 @external
 def burn(_tokenId: uint256):
