@@ -25,5 +25,7 @@ async function getChainId() {
 		showNetwork.innerHTML = 'Mainnet';
 	} else if (chainId === '0x4') {
 		showNetwork.innerHTML = 'Rinkeby';
+	} else {
+		showNetwork.innerHTML = 'Not Mainnet or Rinkeby!';
 	}
 }

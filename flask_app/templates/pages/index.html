@@ -1,7 +1,26 @@
 {% extends 'layouts/bare.html' %}
 
 {% block content %}
-<div>
-	<h1>HELLO WORLD</h1>
+<div class="row">
+	<div class="col">
+		<table class="table" id="cnft-factory-table">
+		  <thead>
+		    <tr>
+		      <th scope="col">#</th>
+		      <th scope="col">cNFT Address</th>
+		      <th scope="col"></th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		  </tbody>
+		</table>
+	</div>
 </div>
+
+<!-- Proxy element for factory addresses --->
+<meta property="development-cnft-address" content={{ cnft_factory_addresses.development }}>
+<meta property="rinkeby-cnft-address" content={{ cnft_factory_addresses.rinkeby }}>
+<meta property="mainnet-cnft-address" content={{ cnft_factory_addresses.mainnet }}>
+
+<script src={{ url_for('static', filename='js/index.js') }}></script>
 {% endblock %}
