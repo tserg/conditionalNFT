@@ -36,6 +36,19 @@ interface ERC721Metadata:
 		_tokenId: uint256
 	) -> String[128]: view
 
+interface ERC721Enumerable:
+
+	def totalSupply() -> uint256: view
+
+	def tokenByIndex(
+		_index: uint256
+	) -> uint256: view
+
+	def tokenOfOwnerByIndex(
+		_address: address,
+		_index: uint256
+	) -> uint256: view
+
 # @dev Emits when ownership of any NFT changes by any mechanism. This event emits when NFTs are
 #      created (`from` == 0) and destroyed (`to` == 0). Exception: during contract creation, any
 #      number of NFTs may be created and assigned without emitting Transfer. At the time of any
@@ -74,8 +87,20 @@ tokenName: String[64]
 tokenSymbol: String[32]
 baseTokenURI: String[128]
 
+# @dev current count of token
+tokenId: uint256
+
+# @dev count of burnt tokens
+burntCount: uint256
+
 # @dev Address of the Lock contract that forms the condition for transferring and receiving this NFT
-lockAddress: address
+lockContract: Lock
+
+# @dev Mapping from index to token ID
+indexToTokenId: HashMap[uint256, uint256]
+
+# @dev Mapping from token ID to index
+tokenIdToIndex: HashMap[uint256, uint256]
 
 # @dev Mapping from NFT ID to the address that owns it.
 idToOwner: HashMap[uint256, address]
@@ -85,6 +110,12 @@ idToApprovals: HashMap[uint256, address]
 
 # @dev Mapping from owner address to count of his tokens.
 ownerToNFTokenCount: HashMap[address, uint256]
+
+# @dev Mapping from owner address to mapping of index to tokenIds
+ownerToNFTokenIdList: HashMap[address, HashMap[uint256, uint256]]
+
+# @dev Mapping from NFT ID to index of owner
+tokenToOwnerIndex: HashMap[uint256, uint256]
 
 # @dev Mapping from owner address to mapping of operator addresses.
 ownerToOperators: HashMap[address, HashMap[address, bool]]
@@ -101,6 +132,11 @@ ERC165_INTERFACE_ID: constant(bytes32) = 0x0000000000000000000000000000000000000
 # @dev ERC165 interface ID of ERC721
 ERC721_INTERFACE_ID: constant(bytes32) = 0x0000000000000000000000000000000000000000000000000000000080ac58cd
 
+# @dev ERC165 interface ID of ERC721Metadata
+ERC721_METADATA_INTERFACE_ID: constant(bytes32) = 0x000000000000000000000000000000000000000000000000000000005b5e139f
+
+# @dev ERC165 interface ID of ERC721Enumerable
+ERC721_ENUMERABLE_INTERFACE_ID: constant(bytes32) = 0x00000000000000000000000000000000000000000000000000000000780e9d63
 
 @external
 def __init__(_name: String[64], _symbol: String[32], _tokenURI: String[128], _lockAddress: address):
@@ -109,12 +145,34 @@ def __init__(_name: String[64], _symbol: String[32], _tokenURI: String[128], _lo
     """
     self.supportedInterfaces[ERC165_INTERFACE_ID] = True
     self.supportedInterfaces[ERC721_INTERFACE_ID] = True
+    self.supportedInterfaces[ERC721_METADATA_INTERFACE_ID] = True
+    self.supportedInterfaces[ERC721_ENUMERABLE_INTERFACE_ID] = True
     self.minter = msg.sender
     self.tokenName = _name
     self.tokenSymbol = _symbol
     self.baseTokenURI = _tokenURI
-    self.lockAddress = _lockAddress
+    self.lockContract = Lock(_lockAddress)
+    self.tokenId = 0
+    self.burntCount = 0
 
+@view
+@internal
+def _balanceOf(_owner: address) -> uint256:
+	"""
+	@dev 	Returns number of tokens held by '_owner'
+			Throws if '_owner' is ZERO_ADDRESS.
+	@param 	_owner Address to query
+	"""
+	assert _owner != ZERO_ADDRESS
+	return self.ownerToNFTokenCount[_owner]
+
+@view
+@internal
+def _totalSupply() -> uint256:
+	"""
+	@dev Returns total supply
+	"""
+	return self.tokenId - self.burntCount
 
 @view
 @external
@@ -136,8 +194,8 @@ def balanceOf(_owner: address) -> uint256:
          Throws if `_owner` is the zero address. NFTs assigned to the zero address are considered invalid.
     @param _owner Address for whom to query the balance.
     """
-    assert _owner != ZERO_ADDRESS
-    return self.ownerToNFTokenCount[_owner]
+
+    return self._balanceOf(_owner)
 
 
 @view
@@ -202,6 +260,47 @@ def tokenURI(_tokenId: uint256) -> String[128]:
 	"""
 	return self.baseTokenURI
 
+@view
+@external
+def totalSupply() -> uint256:
+	"""
+	@dev Returns total supply
+	"""
+	return self._totalSupply()
+
+@view
+@external
+def tokenByIndex(_index: uint256) -> uint256:
+	"""
+	@dev Get token by index
+		Throws if '_index' is larger than totalSupply()
+	"""
+	assert _index <= self._totalSupply() - self.burntCount
+	assert _index > 0
+
+	return self.indexToTokenId[_index]
+
+@view
+@external
+def tokenOfOwnerByIndex(_owner: address, _index: uint256) -> uint256:
+	"""
+	@dev	Get token by index
+			Throws if '_index' is larger than balance of '_owner'
+			Throws if value has been set to 0
+	"""
+	assert _index <= self._balanceOf(_owner)
+
+	assert self.ownerToNFTokenIdList[_owner][_index] != 0
+	return self.ownerToNFTokenIdList[_owner][_index]
+
+@view
+@external
+def getLockAddress() -> address:
+	"""
+	@dev Returns the address of the Lock contract
+	"""
+	return self.lockContract.address
+
 ### TRANSFER FUNCTION HELPERS ###
 
 @view
@@ -220,6 +319,50 @@ def _isApprovedOrOwner(_spender: address, _tokenId: uint256) -> bool:
     spenderIsApprovedForAll: bool = (self.ownerToOperators[owner])[_spender]
     return (spenderIsOwner or spenderIsApproved) or spenderIsApprovedForAll
 
+@internal
+def _addTokenToOwnerList(_to: address, _tokenId: uint256):
+	"""
+	@dev Add a NFT to an index mapping to a given address
+	@param to address of the receiver
+	@param tokenId uint256 ID Of the token to be added
+	"""
+	current_count: uint256 = self._balanceOf(_to)
+
+	self.ownerToNFTokenIdList[_to][current_count] = _tokenId
+	self.tokenToOwnerIndex[_tokenId] = current_count
+
+
+@internal
+def _removeTokenFromOwnerList(_from: address, _tokenId: uint256):
+    """
+    @dev Remove a NFT from an index mapping to a given address
+    @param from address of the sender
+    @param tokenId uint256 ID Of the token to be removed
+    """
+    # Delete
+    current_count: uint256 = self._balanceOf(_from)
+    current_index: uint256 = self.tokenToOwnerIndex[_tokenId]
+
+    if current_count == current_index:
+        # update ownerToNFTokenIdList
+        self.ownerToNFTokenIdList[_from][current_count] = 0
+        # update tokenToOwnerIndex
+        self.tokenToOwnerIndex[_tokenId] = 0
+
+    else:
+        lastTokenId: uint256 = self.ownerToNFTokenIdList[_from][current_count]
+
+        # Add
+        # update ownerToNFTokenIdList
+        self.ownerToNFTokenIdList[_from][current_index] = lastTokenId
+        # update tokenToOwnerIndex
+        self.tokenToOwnerIndex[lastTokenId] = current_index
+
+        # Delete
+        # update ownerToNFTokenIdList
+        self.ownerToNFTokenIdList[_from][current_count] = 0
+        # update tokenToOwnerIndex
+        self.tokenToOwnerIndex[_tokenId] = 0
 
 @internal
 def _addTokenTo(_to: address, _tokenId: uint256):
@@ -233,6 +376,8 @@ def _addTokenTo(_to: address, _tokenId: uint256):
     self.idToOwner[_tokenId] = _to
     # Change count tracking
     self.ownerToNFTokenCount[_to] += 1
+	# Update owner token index tracking
+    self._addTokenToOwnerList(_to, _tokenId)
 
 
 @internal
@@ -243,6 +388,12 @@ def _removeTokenFrom(_from: address, _tokenId: uint256):
     """
     # Throws if `_from` is not the current owner
     assert self.idToOwner[_tokenId] == _from
+
+	#Throws if '_from' does not have a lock from the Lock address
+
+	# Update owner token index tracking
+    self._removeTokenFromOwnerList(_from, _tokenId)
+
     # Change the owner
     self.idToOwner[_tokenId] = ZERO_ADDRESS
     # Change count tracking
@@ -377,14 +528,13 @@ def setApprovalForAll(_operator: address, _approved: bool):
 ### MINT & BURN FUNCTIONS ###
 
 @external
-def mint(_to: address, _tokenId: uint256) -> bool:
+def mint(_to: address) -> bool:
     """
     @dev Function to mint tokens
          Throws if `msg.sender` is not the minter.
          Throws if `_to` is zero address.
          Throws if `_tokenId` is owned by someone.
     @param _to The address that will receive the minted tokens.
-    @param _tokenId The token id to mint.
     @return A boolean that indicates if the operation was successful.
     """
     # Throws if `msg.sender` is not the minter
@@ -392,10 +542,14 @@ def mint(_to: address, _tokenId: uint256) -> bool:
     # Throws if `_to` is zero address
     assert _to != ZERO_ADDRESS
     # Add NFT. Throws if `_tokenId` is owned by someone
+    self.tokenId += 1
+    _tokenId: uint256 = self.tokenId
     self._addTokenTo(_to, _tokenId)
+    current_index: uint256 = self._totalSupply() - self.burntCount
+    self.indexToTokenId[current_index] = _tokenId
+    self.tokenIdToIndex[_tokenId] = current_index
     log Transfer(ZERO_ADDRESS, _to, _tokenId)
     return True
-
 
 @external
 def burn(_tokenId: uint256):
@@ -413,4 +567,19 @@ def burn(_tokenId: uint256):
     assert owner != ZERO_ADDRESS
     self._clearApproval(owner, _tokenId)
     self._removeTokenFrom(owner, _tokenId)
+    current_index: uint256 = self.tokenIdToIndex[_tokenId]
+    last_index: uint256 = self._totalSupply() - self.burntCount
+
+    last_index_token_id: uint256 = self.indexToTokenId[last_index]
+
+    # Set last index to current index
+    self.indexToTokenId[current_index] = last_index_token_id
+    self.tokenIdToIndex[last_index_token_id] = current_index
+
+    # Remove burnt token from mapping of token ID to index
+    self.tokenIdToIndex[_tokenId] = 0
+
+	# Increment coun of burnt tokens
+    self.burntCount += 1
+
     log Transfer(owner, ZERO_ADDRESS, _tokenId)
