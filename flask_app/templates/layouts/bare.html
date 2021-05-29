@@ -22,6 +22,8 @@
 
 	    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
 	    <script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>
+
+
 	</head>
 	<body>
 		<div class="container">
@@ -30,15 +32,23 @@
 					<h1>conditional NFT
 				</div>
 				<div class="col-6">
-					<span>Current wallet: </span>
-					<span id="wallet-address-display"></span>
+					<p>
+						<span class="fw-bold">Current wallet: </span>
+						<span class="showAccount"></span>
+					</p>
+					<p>
+						<span class="fw-bold">Current network: </span>
+						<span class="showNetwork"></span>
+					</p>
 				</div>
 				<div class="col-2">
-					<button class="btn btn-primary float-end" type="button">Connect</button>
+					<button class="btn btn-primary float-end enableEthereumButton" type="button">Enable Ethereum</button>
 				</div>
 			</div>
 		{% block content %}
 		{% endblock %}
 		</div>
+		<!-- Load custom js -->
+		<script src={{ url_for('static', filename='js/connect.js') }}></script>
 	</body>
 </html>
