@@ -1,0 +1,56 @@
+{% extends 'layouts/bare.html' %}
+
+{% block content %}
+<div class="row justify-content-md-center">
+	<div class="col-4">
+		<h1>Deploy a new cNFT</h1>
+	</div>
+</div>
+<form>
+	<div class="row justify-content-md-center">
+		<div class="col-6 mb-3">
+			<label for="token-name" class="form-label">Name of cNFT</label>
+			<input type="text" class="form-control" id="token-name">
+			<div id="token-name-help" class="form-text">Up to 64 characters.</div>
+		</div>
+	</div>
+	<div class="row justify-content-md-center">
+		<div class="col-6 mb-3">
+			<label for="token-symbol" class="form-label">Symbol of cNFT</label>
+			<input type="text" class="form-control" id="token-symbol">
+			<div id="token-symbol-help" class="form-text">Up to 32 characters.</div>
+		</div>
+	</div>
+	<div class="row justify-content-md-center">
+		<div class="col-6 mb-3">
+			<label for="token-uri" class="form-label">URI for metadata of your cNFT</label>
+			<input type="url" class="form-control" id="token-uri">
+		</div>
+	</div>
+	<div class="row justify-content-md-center">
+		<div class="col-6 mb-3">
+			<label for="token-max-supply" class="form-label">Maximum supply</label>
+			<input type="number" class="form-control" id="token-max-supply">
+		</div>
+	</div>
+	<div class="row justify-content-md-center">
+		<div class="col-6 mb-3">
+			<label for="token-price" class="form-label">Minimum price (in ETH)</label>
+			<input type="text" class="form-control" id="token-price">
+			<div id="token-price-help" class="form-text">The minimum ETH price to pay to purchase your cNFT.</div>
+		</div>
+	</div>
+	<div class="row justify-content-md-center">
+		<div class="col-6 mb-3">
+			<label for="token-lock-address" class="form-label">Address of the Lock to be associated with</label>
+			<input type="text" class="form-control" id="token-lock-address">
+			<div id="token-price-help" class="form-text">The Lock address to associate the cNFT with. An address needs to have a valid Lock to purchase, transfer, receive or send the cNFT.</div>
+		</div>
+	</div>
+	<div class="row justify-content-md-center">
+		<div class="col-6">
+			<button type="submit" class="btn btn-primary">Deploy</button>
+		</div>
+	</div>
+</form>
+{% endblock %}

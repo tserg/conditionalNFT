@@ -25,3 +25,8 @@ app = Flask(__name__)
 def index():
 
     return render_template('pages/index.html', cnft_factory_addresses=CNFT_FACTORY_ADDRESSES)
+
+@app.route('/deploy')
+def deploy():
+
+	return render_template('pages/deploy.html', cnft_factory_addresses=CNFT_FACTORY_ADDRESSES)
