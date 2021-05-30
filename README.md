@@ -36,10 +36,22 @@ This will install all of the required packages we selected within the `requireme
 
 ## Deployment
 
+### Smart Contracts
+
 To deploy the contract on your local instance, run `brownie run deploy.py --network development`.
 
 For deployment on Rinkeby, replace `development` with `rinkeby` and save your Infura project ID as an environment variable.
 
 ```
 export WEB3_INFURA_PROJECT_ID=<PROJECT_ID>
+```
+
+### Flask
+
+To launch the Flask app on your local console, navigate to the project root and run the following commands:
+
+```
+export FLASK_APP=flask_app
+export FLASK_DEBUG=True
+flask run
 ```
