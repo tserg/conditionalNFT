@@ -3,7 +3,7 @@
 
 	<head>
 		{% block head %}
-		<title>{% block title %}Conditional NFT{% endblock %}</title>
+		<title>{% block title %}cNFT{% endblock %}</title>
 
 		{% endblock %}
 		<meta charset="UTF-8">
@@ -27,9 +27,10 @@
 	</head>
 	<body>
 		<div class="container">
-			<div class="row mt-5">
+			<div class="row my-5">
 				<div class="col-4">
 					<a href="{{ url_for('index') }}" style="text-decoration: none;"><h1>conditional NFT</h1></a>
+					<img src={{ url_for('static', filename='img/unlock.png') }} style="max-width: 200px;"/>
 				</div>
 				<div class="col-6">
 					<p>
