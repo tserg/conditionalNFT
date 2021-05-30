@@ -491,8 +491,8 @@ def _transferFrom(_from: address, _to: address, _tokenId: uint256, _sender: addr
     # Throws if `_to` is the zero address
     assert _to != ZERO_ADDRESS
 	# Check if both sender and receiver are unlocked (i.e. has a lock)
-    #assert self._isUnlocked(_from)
-    #assert self._isUnlocked(_to)
+    assert self._isUnlocked(_from)
+    assert self._isUnlocked(_to)
     # Clear approval. Throws if `_from` is not the current owner
     self._clearApproval(_from, _tokenId)
     # Remove NFT. Throws if `_tokenId` is not a valid NFT
@@ -606,8 +606,8 @@ def _mint(_to: address) -> bool:
     assert _to != ZERO_ADDRESS
 	# Throws if '_tokenId' is equal to or greater than 'self.maxSupply'
     assert self.tokenId < self.maxSupply
-	# Throws if '_to' is not unlocked
-	#assert self.isUnlocked(_to)
+    # Throws if '_to' is not unlocked
+    assert self._isUnlocked(_to)
     # Add NFT. Throws if `_tokenId` is owned by someone
     self.tokenId += 1
     _tokenId: uint256 = self.tokenId

@@ -378,7 +378,7 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 1081467,
+	"gas": 1089417,
 	"inputs": [
 	  {
 		"name": "_from",
@@ -477,7 +477,7 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 561285,
+	"gas": 565224,
 	"inputs": [
 	  {
 		"name": "_to",
@@ -495,7 +495,7 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 564118,
+	"gas": 568057,
 	"inputs": [],
 	"name": "purchase",
 	"outputs": [
