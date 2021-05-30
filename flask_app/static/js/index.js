@@ -149,16 +149,19 @@ window.addEventListener('load', async() => {
 	if (window.ethereum) {
 		window.web3 = new Web3(window.ethereum);
 		console.log('Ethereum successfully detected');
-		if (web3.chainId === '0x1') {
-			getFactoryListings(mainnetFactoryAddress);
-		} else if (web3.chainId === '0x4') {
-			getFactoryListings(rinkebyFactoryAddress);
-		} else {
-			getFactoryListings(developmentFactoryAddress);
-		}
-
+		web3.eth.getChainId().then(function(result) {
+			console.log(result);
+			if (result === 1) {
+				getFactoryListings(mainnetFactoryAddress);
+			} else if (result === 4) {
+				console.log("Rinkeby detected");
+				getFactoryListings(rinkebyFactoryAddress);
+			} else {
+				console.log("Rinkeby not detected")
+				getFactoryListings(developmentFactoryAddress);
+			}
+		});
 	}
-
 })
 
 async function getFactoryListings(_address) {

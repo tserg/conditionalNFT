@@ -624,13 +624,12 @@ async function populateInfo() {
 
 	cnftContract.methods.maxSupply().call()
 	.then(function(result) {
-		window.maxSupplyValue = result;
+		var maxSupplyValue = result;
 		tokenMaxSupply.innerHTML = result.toString();
-	});
-
-	cnftContract.methods.totalSupply().call()
-	.then(function(result) {
-		tokenRemainingSupply.innerHTML = (maxSupplyValue - result).toString();
+		cnftContract.methods.totalSupply().call()
+		.then(function(result) {
+			tokenRemainingSupply.innerHTML = (maxSupplyValue - result).toString();
+		});
 	});
 
 	cnftContract.methods.minPrice().call()

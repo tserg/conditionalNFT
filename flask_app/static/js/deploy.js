@@ -148,14 +148,17 @@ deployButton.addEventListener('click', async() => {
 	if (window.ethereum) {
 		window.web3 = new Web3(window.ethereum);
 		console.log('Ethereum successfully detected');
-		if (web3.chainId === '0x1') {
-			window.factoryContract = new web3.eth.Contract(_factoryABI, mainnetFactoryAddress);
-		} else if (web3.chainId === '0x4') {
-			window.factoryContract = new web3.eth.Contract(_factoryABI, rinkebyFactoryAddress);
-		} else {
-			window.factoryContract = new web3.eth.Contract(_factoryABI, developmentFactoryAddress);
-		}
-		deployContract();
+		web3.eth.getChainId().then(function(result) {
+			if (result === 1) {
+				window.factoryContract = new web3.eth.Contract(_factoryABI, mainnetFactoryAddress);
+			} else if (result === 4) {
+				window.factoryContract = new web3.eth.Contract(_factoryABI, rinkebyFactoryAddress);
+			} else {
+				window.factoryContract = new web3.eth.Contract(_factoryABI, developmentFactoryAddress);
+			}
+			deployContract();
+		})
+
 
 	}
 })
@@ -188,7 +191,9 @@ async function deployContract() {
 	})
 	.on('receipt', function(receipt) {
 		console.log(receipt);
-		console.log(receipt.events.ConditionalNFTCreated.returnValues[0]);
+		var cnft_address = receipt.events.ConditionalNFTCreated.returnValues[0];
+		console.log(cnft_address);
+		window.location.replace('/purchase/' + cnft_address.toString());
 	})
 	.on('error', function(error, receipt) {
 		console.log(error);
