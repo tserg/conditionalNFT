@@ -194,7 +194,7 @@ async function updateListing(_index) {
 			var viewButton = document.createElement('a');
 			viewButton.innerHTML = 'View';
 			viewButton.type = 'button';
-			viewButton.href = '#';
+			viewButton.href = '/purchase/' + result.toString();
 			row.appendChild(viewButton);
 		} else {
 			console.log(error);

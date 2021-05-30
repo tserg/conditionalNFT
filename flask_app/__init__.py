@@ -21,12 +21,17 @@ CNFT_FACTORY_ADDRESSES = {
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def index():
 
     return render_template('pages/index.html', cnft_factory_addresses=CNFT_FACTORY_ADDRESSES)
 
-@app.route('/deploy')
+@app.route('/deploy', methods=['GET'])
 def deploy():
 
 	return render_template('pages/deploy.html', cnft_factory_addresses=CNFT_FACTORY_ADDRESSES)
+
+@app.route('/purchase/<cnft_address>', methods=['GET'])
+def purchase(cnft_address):
+	print(str(cnft_address));
+	return render_template('pages/purchase.html', cnft_address=str(cnft_address))

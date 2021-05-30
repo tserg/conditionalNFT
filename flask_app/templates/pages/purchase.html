@@ -1,0 +1,113 @@
+{% extends 'layouts/bare.html' %}
+
+{% block content %}
+
+<div class="row justify-content-md-center">
+	<div class="col-4">
+		<h1>View cNFT</h1>
+	</div>
+</div>
+
+<div class="row justify-content-md-center my-2">
+	<div class="col-2">
+		<span class="fw-bold">Token Name: </span>
+	</div>
+	<div class="col-4">
+		<span id="token-name"></span>
+	</div>
+</div>
+
+<div class="row justify-content-md-center my-2">
+	<div class="col-2">
+		<span class="fw-bold">Token Symbol: </span>
+
+	</div>
+	<div class="col-4">
+		<span id="token-symbol"></span>
+	</div>
+</div>
+
+<div class="row justify-content-md-center my-2">
+	<div class="col-2">
+		<span class="fw-bold">Token Lock: </span>
+	</div>
+	<div class="col-4">
+		<span id="token-lock-address"></span>
+	</div>
+</div>
+
+<div class="row justify-content-md-center my-2">
+	<div class="col-2">
+		<span class="fw-bold">Min Price: </span>
+	</div>
+	<div class="col-4">
+		<span id="token-price"></span>
+	</div>
+</div>
+
+<div class="row justify-content-md-center my-2">
+	<div class="col-2">
+		<span class="fw-bold">Max Supply: </span>
+	</div>
+	<div class="col-4">
+		<span id="token-max-supply"></span>
+	</div>
+</div>
+
+<div class="row justify-content-md-center my-2">
+	<div class="col-2">
+		<span class="fw-bold">Remaining Supply: </span>
+	</div>
+	<div class="col-4">
+		<span id="token-remaining-supply"></span>
+	</div>
+</div>
+
+<div class="row justify-content-md-center my-2">
+	<div class="col-2">
+		<span class="fw-bold">Address balance: </span>
+	</div>
+	<div class="col-4">
+		<span id="address-balance"></span>
+	</div>
+</div>
+
+<div class="row justify-content-md-center my-2">
+	<div class="col-2 mb-3">
+		<label for="verify-lock-address" class="form-label fw-bold">Verify Lock for address</label>
+	</div>
+	<div class="col-4">
+		<input type="text" class="form-control" id="verify-lock-address">
+	</div>
+<div>
+<div class="row justify-content-md-center my-2">
+	<div class="col-2">
+		<button class="btn btn-info" type="button" id="verify-lock-address-button">Verify</button>
+	</div>
+	<div class="col-4">
+		<span id="verify-lock-address-result"></span>
+	</div>
+</div>
+
+
+
+<div class="row justify-content-md-center">
+	<div class="col-2 mb-3">
+		<label for="token-purchase-price" class="form-label fw-bold">Price to pay (in ETH)</label>
+	</div>
+	<div class="col-4">
+		<input type="text" class="form-control" id="token-purchase-price">
+	</div>
+</div>
+<div class="row justify-content-md-center">
+	<div class="col-6">
+		<button type="button" class="btn btn-primary" id='purchase-btn'>Purchase</button>
+	</div>
+</div>
+
+
+<!-- Proxy element for cNFT address --->
+<meta property="cnft-address" content={{ cnft_address }}>
+
+<script src={{ url_for('static', filename='js/purchase.js') }}></script>
+{% endblock %}
