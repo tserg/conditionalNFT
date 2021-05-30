@@ -26,6 +26,7 @@
 	</head>
 	<body>
 		<div class="container">
+			
 			<div class="row my-5">
 
 				<div class="col-4">
@@ -45,6 +46,10 @@
 						<span class="fw-bold">Current network: </span>
 						<span class="showNetwork"></span>
 					</p>
+					<p>
+						<span class="fw-bold">cNFT Factory Address: </span>
+						<span class="showFactoryAddress"></span>
+					</p>
 				</div>
 				<div class="col-2">
 					<button class="btn btn-primary float-end enableEthereumButton" type="button">Enable Ethereum</button>
@@ -53,6 +58,7 @@
 		{% block content %}
 		{% endblock %}
 		</div>
+
 		<!-- Load custom js -->
 		<script src={{ url_for('static', filename='js/connect.js') }}></script>
 	</body>

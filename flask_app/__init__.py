@@ -34,4 +34,8 @@ def deploy():
 @app.route('/purchase/<cnft_address>', methods=['GET'])
 def purchase(cnft_address):
 	print(str(cnft_address));
-	return render_template('pages/purchase.html', cnft_address=str(cnft_address))
+	return render_template(
+		'pages/purchase.html',
+		cnft_factory_addresses=CNFT_FACTORY_ADDRESSES,
+		cnft_address=str(cnft_address)
+	)
