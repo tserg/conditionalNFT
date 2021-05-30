@@ -1,0 +1,15 @@
+{
+	"title": "Sample cNFT ERC721 Metadata"
+	"type": "object",
+	"properties": {
+		"name": {
+			"type": "string",
+			"description": "conditonalNFT"
+		},
+		"description": {
+			"type": "string",
+			"description": "A NFT where ownership and control is conditional upon a Lock"
+		}
+	}
+
+}
