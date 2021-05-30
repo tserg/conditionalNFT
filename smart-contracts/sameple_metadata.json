@@ -1,5 +1,5 @@
 {
-	"title": "Sample cNFT ERC721 Metadata"
+	"title": "Sample cNFT ERC721 Metadata",
 	"type": "object",
 	"properties": {
 		"name": {
