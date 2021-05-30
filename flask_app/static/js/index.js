@@ -195,9 +195,12 @@ async function updateListing(_index) {
 			row.appendChild(td1);
 
 			var viewButton = document.createElement('a');
-			viewButton.innerHTML = 'View';
+			//viewButton.innerHTML = 'View';
 			viewButton.type = 'button';
 			viewButton.href = '/purchase/' + result.toString();
+			var viewButtonIcon = document.createElement('i');
+			viewButtonIcon.className = 'bi bi-arrow-right';
+			viewButton.appendChild(viewButtonIcon);
 			row.appendChild(viewButton);
 		} else {
 			console.log(error);
