@@ -6,9 +6,12 @@ const tokenRemainingSupply = document.querySelector('#token-remaining-supply');
 const tokenPrice = document.querySelector('#token-price');
 const tokenLock = document.querySelector('#token-lock-address');
 const addressBalance = document.querySelector('#address-balance');
+const contractFundsBalance = document.querySelector('#contract-funds-balance');
 
 const verifyTokenLockButton = document.querySelector('#verify-lock-address-button');
 const verifyTokenLockResult = document.querySelector('#verify-lock-address-result');
+
+const withdrawButton = document.querySelector('#withdraw-btn');
 
 const purchaseButton = document.querySelector('#purchase-btn');
 
@@ -587,6 +590,30 @@ verifyTokenLockButton.addEventListener('click', async() => {
 
 })
 
+withdrawButton.addEventListener('click', async() => {
+	var accounts = await web3.eth.getAccounts();
+	const account = accounts[0];
+
+	cnftContract.methods.withdraw().send({'from': account})
+	.on('transactionHash', function(hash) {
+		console.log(hash);
+		withdrawButton.innerHTML = 'Withdrawing';
+		withdrawButton.disabled = true;
+	})
+	.on('confirmation', function(confirmationNumber, receipt) {
+		console.log(confirmationNumber);
+	})
+	.on('receipt', function(receipt) {
+		console.log(receipt);
+		window.location.reload();
+	})
+	.on('error', function(error, receipt) {
+		console.log(error);
+		withdrawButton.innerHTML = 'Withdraw to beneficiary';
+		withdrawButton.disabled = false;
+	});
+})
+
 purchaseButton.addEventListener('click', async() => {
 
 	var accounts = await web3.eth.getAccounts();
@@ -656,6 +683,11 @@ async function populateInfo() {
 	cnftContract.methods.balanceOf(accounts[0]).call()
 	.then(function(result) {
 		addressBalance.innerHTML = result.toString();
+	});
+
+	web3.eth.getBalance(cnftAddress)
+	.then(function(result) {
+		contractFundsBalance.innerHTML = web3.utils.fromWei(result).toString() + ' ETH';
 	});
 
 }
