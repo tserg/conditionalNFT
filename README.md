@@ -38,4 +38,8 @@ This will install all of the required packages we selected within the `requireme
 
 To deploy the contract on your local instance, run `brownie run deploy.py --network development`.
 
-For deployment on Rinkeby, replace `development` with `rinkeby`.
+For deployment on Rinkeby, replace `development` with `rinkeby` and save your Infura project ID as an environment variable.
+
+```
+export WEB3_INFURA_PROJECT_ID=<PROJECT_ID>
+```
