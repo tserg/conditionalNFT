@@ -6,6 +6,7 @@ const tokenRemainingSupply = document.querySelector('#token-remaining-supply');
 const tokenPrice = document.querySelector('#token-price');
 const tokenLock = document.querySelector('#token-lock-address');
 const addressBalance = document.querySelector('#address-balance');
+const addressBalanceIds = document.querySelector('#address-balance-ids');
 const contractFundsBalance = document.querySelector('#contract-funds-balance');
 
 const verifyTokenLockButton = document.querySelector('#verify-lock-address-button');
@@ -14,6 +15,8 @@ const verifyTokenLockResult = document.querySelector('#verify-lock-address-resul
 const withdrawButton = document.querySelector('#withdraw-btn');
 
 const purchaseButton = document.querySelector('#purchase-btn');
+
+const transferButton = document.querySelector('#transfer-btn');
 
 const cnftAddress = document.querySelector('meta[property~="cnft-address"]').getAttribute('content');
 
@@ -614,6 +617,33 @@ withdrawButton.addEventListener('click', async() => {
 	});
 })
 
+transferButton.addEventListener('click', async() => {
+	var accounts = await web3.eth.getAccounts();
+	const account = accounts[0];
+
+	var tokenIDToTransfer = parseInt(document.querySelector('#transfer-token-id').value);
+	var addressToTransfer = document.querySelector('#transfer-address').value;
+
+	cnftContract.methods.transferFrom(account, addressToTransfer, tokenIDToTransfer).send({'from': account})
+	.on('transactionHash', function(hash) {
+		console.log(hash);
+		transferButton.innerHTML = 'Transferring';
+		transferButton.disabled = true;
+	})
+	.on('confirmation', function(confirmationNumber, receipt) {
+		console.log(confirmationNumber);
+	})
+	.on('receipt', function(receipt) {
+		console.log(receipt);
+		window.location.reload();
+	})
+	.on('error', function(error, receipt) {
+		console.log(error);
+		transferButton.innerHTML = 'Transfer';
+		transferButton.disabled = false;
+	});
+})
+
 purchaseButton.addEventListener('click', async() => {
 
 	var accounts = await web3.eth.getAccounts();
@@ -683,11 +713,29 @@ async function populateInfo() {
 	cnftContract.methods.balanceOf(accounts[0]).call()
 	.then(function(result) {
 		addressBalance.innerHTML = result.toString();
+
+		var accountBalance = parseInt(result);
+		getTokenIdByAddress(accountBalance, account);
+		//addressBalanceIds.innerHTML = tokenIds.toString();
+
 	});
 
 	web3.eth.getBalance(cnftAddress)
 	.then(function(result) {
 		contractFundsBalance.innerHTML = web3.utils.fromWei(result).toString() + ' ETH';
 	});
+
+}
+
+async function getTokenIdByAddress(_balance, _address) {
+
+	for (i=1; i<_balance+1; i++) {
+		cnftContract.methods.tokenOfOwnerByIndex(_address, i).call()
+		.then(function(result) {
+			console.log(result);
+			addressBalanceIds.innerHTML += " " + result.toString();
+
+		});
+	}
 
 }
