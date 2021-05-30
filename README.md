@@ -55,3 +55,7 @@ export FLASK_APP=flask_app
 export FLASK_DEBUG=True
 flask run
 ```
+
+## Future Improvements
+- Add ERC20 token for payment
+- Toggle whether smart contract also requires a lock based on boolean variable
