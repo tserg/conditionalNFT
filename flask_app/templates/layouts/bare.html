@@ -11,7 +11,7 @@
 		<link rel="preconnect" href="https://fonts.gstatic.com">
 		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100&display=swap" rel="stylesheet">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-
+		<link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.png') }}">
 
 		<!-- Bootstrap -->
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
@@ -27,9 +27,14 @@
 	<body>
 		<div class="container">
 			<div class="row my-5">
+
 				<div class="col-4">
-					<a href="{{ url_for('index') }}" style="text-decoration: none;"><h1>conditional NFT</h1></a>
-					<img src={{ url_for('static', filename='img/unlock.png') }} style="max-width: 200px;"/>
+					<div class="d-flex flex-column">
+						<a href="{{ url_for('index') }}" style="text-decoration: none;">
+							<img src={{ url_for('static', filename='img/logo_transparent.png') }} style="max-width: 200px; max-height: 200px;"/>
+						</a>
+						<img src={{ url_for('static', filename='img/unlock.png') }} style="max-width: 200px;"/>
+					</div>
 				</div>
 				<div class="col-6">
 					<p>

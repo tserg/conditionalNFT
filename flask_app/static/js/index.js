@@ -175,9 +175,6 @@ async function getFactoryListings(_address) {
 			updateListing(i);
 		}
 	});
-	console.log(factoryContract);
-	console.log(123);
-	console.log(_address);
 }
 
 async function updateListing(_index) {
