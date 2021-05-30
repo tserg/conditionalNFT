@@ -608,6 +608,7 @@ purchaseButton.addEventListener('click', async() => {
 	.on('receipt', function(receipt) {
 		console.log(receipt);
 		console.log(receipt.events.Purchase.returnValues[0]);
+		window.location.reload();
 	})
 	.on('error', function(error, receipt) {
 		console.log(error);
