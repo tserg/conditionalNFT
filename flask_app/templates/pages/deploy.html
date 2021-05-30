@@ -49,8 +49,15 @@
 	</div>
 	<div class="row justify-content-md-center">
 		<div class="col-6">
-			<button type="submit" class="btn btn-primary">Deploy</button>
+			<button type="button" class="btn btn-primary" id='deploy-btn'>Deploy</button>
 		</div>
 	</div>
 </form>
+
+<!-- Proxy element for factory addresses --->
+<meta property="development-cnft-address" content={{ cnft_factory_addresses.development }}>
+<meta property="rinkeby-cnft-address" content={{ cnft_factory_addresses.rinkeby }}>
+<meta property="mainnet-cnft-address" content={{ cnft_factory_addresses.mainnet }}>
+
+<script src={{ url_for('static', filename='js/deploy.js') }}></script>
 {% endblock %}
