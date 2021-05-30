@@ -20,14 +20,18 @@ eth-rlp==0.2.1
 eth-typing==2.2.2
 eth-utils==1.9.5
 execnet==1.8.0
+Flask==2.0.1
 hexbytes==0.2.1
 hypothesis==5.41.3
 idna==2.10
 inflection==0.5.0
 iniconfig==1.1.1
 ipfshttpclient==0.7.0
+itsdangerous==2.0.1
+Jinja2==3.0.1
 jsonschema==3.2.0
 lru-dict==1.1.7
+MarkupSafe==2.0.1
 more-itertools==8.7.0
 multiaddr==0.0.9
 mythx-models==1.9.1
@@ -73,3 +77,4 @@ vyper==0.2.11
 wcwidth==0.2.5
 web3==5.11.1
 websockets==8.1
+Werkzeug==2.0.1
