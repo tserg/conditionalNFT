@@ -21,6 +21,7 @@ eth-typing==2.2.2
 eth-utils==1.9.5
 execnet==1.8.0
 Flask==2.0.1
+gunicorn==20.1.0
 hexbytes==0.2.1
 hypothesis==5.41.3
 idna==2.10
