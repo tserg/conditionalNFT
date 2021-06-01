@@ -14,6 +14,8 @@ The following additional extensions have been implemented:
 - ERC721Metadata
 - ERC721Enumerable
 
+An instance has been deployed on https://cnft.herokuapp.com
+
 ## Installation
 
 We use the Brownie framework for development and deployment. Please refer to the instructions below for installation.
