@@ -142,20 +142,20 @@ ownerToOperators: HashMap[address, HashMap[address, bool]]
 # @dev Address of minter, who can mint a token
 minter: address
 
-# @dev Mapping of interface id to bool about whether or not it's supported
-supportedInterfaces: HashMap[bytes32, bool]
-
 # @dev ERC165 interface ID of ERC165
-ERC165_INTERFACE_ID: constant(bytes32) = 0x0000000000000000000000000000000000000000000000000000000001ffc9a7
+ERC165_INTERFACE_ID: constant(Bytes[32]) = b"\x01\xff\xc9\xa7"
 
 # @dev ERC165 interface ID of ERC721
-ERC721_INTERFACE_ID: constant(bytes32) = 0x0000000000000000000000000000000000000000000000000000000080ac58cd
+ERC721_INTERFACE_ID: constant(Bytes[32]) = b"\x80\xac\x58\xcd"
 
 # @dev ERC165 interface ID of ERC721Metadata
-ERC721_METADATA_INTERFACE_ID: constant(bytes32) = 0x000000000000000000000000000000000000000000000000000000005b5e139f
+ERC721_METADATA_INTERFACE_ID: constant(Bytes[32]) = b'[^\x13\x9f'
 
 # @dev ERC165 interface ID of ERC721Enumerable
-ERC721_ENUMERABLE_INTERFACE_ID: constant(bytes32) = 0x00000000000000000000000000000000000000000000000000000000780e9d63
+ERC721_ENUMERABLE_INTERFACE_ID: constant(Bytes[32]) = b'x\x0e\x9dc'
+
+# @dev ERC165 interface ID of ERC721TokenReceiver
+ERC721_TOKEN_RECEIVER_INTERFACE_ID: constant(Bytes[32]) = b'\x15\x0bz\x02'
 
 @external
 def __init__():
@@ -185,10 +185,6 @@ def initialize(
 	@param _minter Address which can mint tokens
 	@param _beneficiary Address which funds will be withdrawn to
     """
-    self.supportedInterfaces[ERC165_INTERFACE_ID] = True
-    self.supportedInterfaces[ERC721_INTERFACE_ID] = True
-    self.supportedInterfaces[ERC721_METADATA_INTERFACE_ID] = True
-    self.supportedInterfaces[ERC721_ENUMERABLE_INTERFACE_ID] = True
     self.minter = msg.sender
     self.tokenName = _name
     self.tokenSymbol = _symbol
@@ -222,14 +218,38 @@ def _totalSupply() -> uint256:
 	return self.tokenId - self.burntCount
 
 @view
+@internal
+def _supportsInterface(_interfaceID: Bytes[4]) -> bool:
+    """
+    @dev Internal function to check interface
+	@param _interfaceID Id of the interface in Bytes[4]
+	"""
+
+    return (_interfaceID == ERC165_INTERFACE_ID) or (_interfaceID == ERC721_INTERFACE_ID) or \
+		(_interfaceID == ERC721_METADATA_INTERFACE_ID) or (_interfaceID == ERC721_ENUMERABLE_INTERFACE_ID) or \
+		(_interfaceID == ERC721_TOKEN_RECEIVER_INTERFACE_ID)
+
+@view
 @external
 def supportsInterface(_interfaceID: bytes32) -> bool:
     """
     @dev Interface identification is specified in ERC-165.
     @param _interfaceID Id of the interface
     """
-    return self.supportedInterfaces[_interfaceID]
+    return self._supportsInterface(slice(_interfaceID, 28, 4))
 
+@external
+@payable
+def __default__() -> bool:
+    if (slice(msg.data, 0, 4) == ERC165_INTERFACE_ID):
+        return self._supportsInterface(slice(msg.data, 4, 4))
+    else:
+        return False
+
+@view
+@external
+def functionId() -> Bytes[8]:
+    return slice(msg.data, 0, 8)
 
 ### VIEW FUNCTIONS ###
 
