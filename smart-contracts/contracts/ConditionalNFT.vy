@@ -241,7 +241,9 @@ def supportsInterface(_interfaceID: bytes32) -> bool:
 @external
 @payable
 def __default__() -> bool:
-    if (slice(msg.data, 0, 4) == ERC165_INTERFACE_ID):
+    if (slice(msg.data, 0, 4) == ERC165_INTERFACE_ID) or (slice(msg.data, 0, 4) == ERC721_INTERFACE_ID) or \
+		(slice(msg.data, 0, 4) == ERC721_METADATA_INTERFACE_ID) or (slice(msg.data, 0, 4) == ERC721_ENUMERABLE_INTERFACE_ID) or \
+		(slice(msg.data, 0, 4) == ERC721_TOKEN_RECEIVER_INTERFACE_ID):
         return self._supportsInterface(slice(msg.data, 4, 4))
     else:
         return False
