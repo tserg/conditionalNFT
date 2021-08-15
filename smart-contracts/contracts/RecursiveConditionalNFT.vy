@@ -357,14 +357,6 @@ def tokenOfOwnerByIndex(_owner: address, _index: uint256) -> uint256:
 	return self.ownerToNFTokenIdList[_owner][_index]
 
 @view
-@external
-def getPreconditionAddress() -> address:
-	"""
-	@dev Returns the address of the RecursiveConditionalNFT contract
-	"""
-	return self.preconditionContractAddress
-
-@view
 @internal
 def _isEligible(_from: address) -> bool:
 	"""
