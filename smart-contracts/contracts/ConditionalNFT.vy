@@ -248,11 +248,6 @@ def __default__() -> bool:
     else:
         return False
 
-@view
-@external
-def functionId() -> Bytes[8]:
-    return slice(msg.data, 0, 8)
-
 ### VIEW FUNCTIONS ###
 
 @view
