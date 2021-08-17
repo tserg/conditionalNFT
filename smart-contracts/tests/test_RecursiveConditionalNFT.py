@@ -78,6 +78,8 @@ def test_add1_authorised_purchase_secondary_rcnft(secondary_rcnft, accounts):
 	Address 1 owns primary rcNFT.
 	Address 1 purchases secondary rcNFT.
 	"""
+	assert secondary_rcnft.isEligible(accounts[1]) == True
+
 	tx1 = secondary_rcnft.purchase({'from': accounts[1], 'value': SECONDARY_RCNFT_PRICE})
 
 	assert tx1.events['Purchase']['purchaser'] == accounts[1]
@@ -90,6 +92,8 @@ def test_add1_unauthorised_transfer_secondary_rcnft(secondary_rcnft, accounts):
 	Address 2 does not own primary rcNFT.
 	Address 1 transfers secondary rcNFT to address 2.
 	"""
+	assert secondary_rcnft.isEligible(accounts[2]) == False
+
 	with reverts():
 		tx1 = secondary_rcnft.transferFrom(accounts[1], accounts[2], 1, {'from': accounts[1]})
 
@@ -98,5 +102,25 @@ def test_add2_unauthorised_purchase_secondary_rcnft(secondary_rcnft, accounts):
 	Address 2 does not own primary rcNFT.
 	Address 2 purchases secondary rcNFT.
 	"""
+	assert secondary_rcnft.isEligible(accounts[2]) == False
+
 	with reverts():
 		tx1 = secondary_rcnft.purchase({'from': accounts[2], 'value': SECONDARY_RCNFT_PRICE})
+
+def test_add1_authorised_transfer_secondary_rcnft(base_rcnft, secondary_rcnft, accounts):
+	"""
+	Address 1 and 2 owns primary rcNFT.
+	Address 1 owns secondary rcNFT.
+	Address 1 transfers secondary rcNFT to address 2.
+	"""
+	tx1 = base_rcnft.purchase({'from': accounts[2], 'value': BASE_RCNFT_PRICE})
+	tx2 = secondary_rcnft.purchase({'from': accounts[1], 'value': SECONDARY_RCNFT_PRICE})
+
+	assert secondary_rcnft.isEligible(accounts[2]) == True
+
+	tx3 = secondary_rcnft.transferFrom(accounts[1], accounts[2], 1, {'from': accounts[1]})
+
+	assert tx3.events['Transfer']['sender'] == accounts[1]
+	assert tx3.events['Transfer']['receiver'] == accounts[2]
+	assert tx3.events['Transfer']['tokenId'] == 1
+	assert secondary_rcnft.ownerOf(1) == accounts[2]
