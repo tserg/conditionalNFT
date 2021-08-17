@@ -34,7 +34,9 @@
 						<a href="{{ url_for('index') }}" style="text-decoration: none;">
 							<img src={{ url_for('static', filename='img/logo_transparent.png') }} style="max-width: 200px; max-height: 200px;"/>
 						</a>
+						{% if 'unlock' in request.path %}
 						<img src={{ url_for('static', filename='img/unlock.png') }} style="max-width: 200px;"/>
+						{% endif %}
 					</div>
 				</div>
 				<div class="col-6">
@@ -46,13 +48,14 @@
 						<span class="fw-bold">Current network: </span>
 						<span class="showNetwork"></span>
 					</p>
-					<p>
-						<span class="fw-bold">cNFT Factory Address: </span>
-						<span class="showFactoryAddress"></span>
-					</p>
 				</div>
-				<div class="col-2">
-					<button class="btn btn-primary float-end enableEthereumButton" type="button">Enable Ethereum</button>
+				<div class="col-2 flex-column d-flex">
+					{% if 'unlock' in request.path %}
+					<a href="/" class="btn btn-secondary float-end" type="button" >Switch to rcNFT</a>
+					{% else %}
+					<a href="/unlock"  class="btn btn-secondary float-end" type="button" >Switch to Unlock</a>
+					{% endif %}
+					<button class="btn btn-primary float-end enableEthereumButton mt-2" type="button">Enable Ethereum</button>
 				</div>
 			</div>
 		{% block content %}

@@ -42,9 +42,9 @@
 </div>
 <div class="row justify-content-md-center">
 	<div class="col-6 mb-3">
-		<label for="token-lock-address" class="form-label fw-bold">Address of the Lock to be associated with</label>
+		<label for="token-lock-address" class="form-label fw-bold">Address of the underlying NFT to be associated with</label>
 		<input type="text" class="form-control" id="token-lock-address">
-		<div id="token-price-help" class="form-text">The Lock address to associate the cNFT with. An address needs to have a valid Lock to purchase, transfer, receive or send the cNFT.</div>
+		<div id="token-price-help" class="form-text">The underlying address to associate the cNFT with. An address needs to have a valid NFT to purchase, transfer, receive or send the cNFT.</div>
 	</div>
 </div>
 <div class="row justify-content-md-center">
@@ -58,5 +58,9 @@
 <meta property="rinkeby-cnft-address" content={{ cnft_factory_addresses.rinkeby }}>
 <meta property="mainnet-cnft-address" content={{ cnft_factory_addresses.mainnet }}>
 
+{% if 'unlock' in request.path %}
+<script src={{ url_for('static', filename='js/deploy_unlock.js') }}></script>
+{% else %}
 <script src={{ url_for('static', filename='js/deploy.js') }}></script>
+{% endif %}
 {% endblock %}

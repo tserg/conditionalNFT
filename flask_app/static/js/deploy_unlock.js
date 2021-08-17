@@ -24,7 +24,7 @@ const _factoryABI = [
 		"type": "string"
 	  }
 	],
-	"name": "RecursiveConditionalNFTCreated",
+	"name": "ConditionalNFTCreated",
 	"type": "event"
   },
   {
@@ -39,7 +39,7 @@ const _factoryABI = [
 	"type": "constructor"
   },
   {
-	"gas": 168323,
+	"gas": 167698,
 	"inputs": [
 	  {
 		"name": "_name",
@@ -62,11 +62,11 @@ const _factoryABI = [
 		"type": "uint256"
 	  },
 	  {
-		"name": "_preconditionAddress",
+		"name": "_lockAddress",
 		"type": "address"
 	  }
 	],
-	"name": "deploy_rcnft_contract",
+	"name": "deploy_cnft_contract",
 	"outputs": [
 	  {
 		"name": "",
@@ -106,7 +106,7 @@ const _factoryABI = [
 		"type": "address"
 	  }
 	],
-	"name": "get_condition_by_index_and_cnft",
+	"name": "get_lock_by_index_and_cnft",
 	"outputs": [
 	  {
 		"name": "",
@@ -180,7 +180,7 @@ async function deployContract() {
 	var formattedTokenPrice = web3.utils.toWei(tokenPrice);
 	console.log(formattedTokenPrice);
 
-	factoryContract.methods.deploy_rcnft_contract(tokenName, tokenSymbol, tokenURI, tokenSupply, formattedTokenPrice, tokenLock).send({'from': account})
+	factoryContract.methods.deploy_cnft_contract(tokenName, tokenSymbol, tokenURI, tokenSupply, formattedTokenPrice, tokenLock).send({'from': account})
 	.on('transactionHash', function(hash) {
 		console.log(hash);
 		deployButton.innerHTML = 'Deploying';

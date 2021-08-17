@@ -5,10 +5,10 @@
 <div class="row">
 	<div class="col">
 		<h1>How it works</h1>
-		<p>recursive conditional NFT allows you to condition the ownership and actions of a NFT on the possession of an underlying NFT (ERC-721).</p>
-		<p>Through this conditional ownership, you can now build second-order monetisation on the underlying NFT.</p>
-		<p>For example, you can now sell ultra-exclusive content to a section of your audience who are in possession of the underlying NFT.
-			This rewards your underlying NFT holders, and incentivises new audiences to purchase your underlying NFT in order to access
+		<p>conditional NFT allows you to condition the ownership and actions of a NFT on the possession of a valid Lock from Unlock Protocol.</p>
+		<p>Through this conditional ownership, you can now build second-order monetisation on the underlying access granted by Unlock Protocol.</p>
+		<p>For example, you can now sell ultra-exclusive content to a section of your audience who are in possession of your Lock.
+			This rewards your existing Lock holders, and incentivises new audiences to purchase your Lock in order to access
 			the opportunity to purchase this ultra-exclusive content.
 		</p>
 	</div>
@@ -17,7 +17,7 @@
 
 <div class="row my-3">
 	<div class="col float-center">
-		<a href="{{ url_for('deploy') }}" class="btn btn-secondary">Deploy</a>
+		<a href="{{ url_for('deploy_unlock') }}" class="btn btn-secondary">Deploy</a>
 	</div>
 </div>
 
@@ -40,5 +40,5 @@
 <meta property="development-cnft-address" content={{ cnft_factory_addresses.development }}>
 <meta property="rinkeby-cnft-address" content={{ cnft_factory_addresses.rinkeby }}>
 <meta property="mainnet-cnft-address" content={{ cnft_factory_addresses.mainnet }}>
-<script src={{ url_for('static', filename='js/index.js') }}></script>
+<script src={{ url_for('static', filename='js/index_unlock.js') }}></script>
 {% endblock %}

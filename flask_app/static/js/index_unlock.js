@@ -2,7 +2,7 @@ const developmentFactoryAddress = document.querySelector('meta[property~="develo
 const rinkebyFactoryAddress = document.querySelector('meta[property~="rinkeby-cnft-address"]').getAttribute('content');
 const mainnetFactoryAddress = document.querySelector('meta[property~="mainnet-cnft-address"]').getAttribute('content');
 
-const deployButton = document.querySelector('#deploy-btn');
+const cnftFactoryTable = document.querySelector('#cnft-factory-table');
 
 const _factoryABI = [
   {
@@ -24,7 +24,7 @@ const _factoryABI = [
 		"type": "string"
 	  }
 	],
-	"name": "RecursiveConditionalNFTCreated",
+	"name": "ConditionalNFTCreated",
 	"type": "event"
   },
   {
@@ -39,7 +39,7 @@ const _factoryABI = [
 	"type": "constructor"
   },
   {
-	"gas": 168323,
+	"gas": 167698,
 	"inputs": [
 	  {
 		"name": "_name",
@@ -62,11 +62,11 @@ const _factoryABI = [
 		"type": "uint256"
 	  },
 	  {
-		"name": "_preconditionAddress",
+		"name": "_lockAddress",
 		"type": "address"
 	  }
 	],
-	"name": "deploy_rcnft_contract",
+	"name": "deploy_cnft_contract",
 	"outputs": [
 	  {
 		"name": "",
@@ -106,7 +106,7 @@ const _factoryABI = [
 		"type": "address"
 	  }
 	],
-	"name": "get_condition_by_index_and_cnft",
+	"name": "get_lock_by_index_and_cnft",
 	"outputs": [
 	  {
 		"name": "",
@@ -144,60 +144,63 @@ const _factoryABI = [
   }
 ]
 
-deployButton.addEventListener('click', async() => {
+window.addEventListener('load', async() => {
+
 	if (window.ethereum) {
 		window.web3 = new Web3(window.ethereum);
 		console.log('Ethereum successfully detected');
 		web3.eth.getChainId().then(function(result) {
+			console.log(result);
 			if (result === 1) {
-				window.factoryContract = new web3.eth.Contract(_factoryABI, mainnetFactoryAddress);
+				getFactoryListings(mainnetFactoryAddress);
 			} else if (result === 4) {
-				window.factoryContract = new web3.eth.Contract(_factoryABI, rinkebyFactoryAddress);
+				console.log("Rinkeby detected");
+				getFactoryListings(rinkebyFactoryAddress);
 			} else {
-				window.factoryContract = new web3.eth.Contract(_factoryABI, developmentFactoryAddress);
+				console.log("Rinkeby not detected")
+				getFactoryListings(developmentFactoryAddress);
 			}
-			deployContract();
-		})
-
-
+		});
 	}
 })
 
-async function deployContract() {
+async function getFactoryListings(_address) {
 
-	var accounts = await web3.eth.getAccounts();
-	const account = accounts[0];
+	window.factoryContract = new web3.eth.Contract(_factoryABI, _address);
 
-	var tokenName = document.querySelector('#token-name').value;
-	var tokenSymbol = document.querySelector('#token-symbol').value;
-	var tokenURI = document.querySelector('#token-uri').value;
-	var tokenSupply = document.querySelector('#token-max-supply').value;
-	var tokenPrice = document.querySelector('#token-price').value;
-	var tokenLock = document.querySelector('#token-lock-address').value;
+	factoryContract.methods.totalCount().call()
+	.then(function(result) {
+		console.log(result);
+		for (i=1; i<parseInt(result)+1; i++) {
+			updateListing(i);
+		}
+	});
+}
 
-	console.log(tokenPrice);
+async function updateListing(_index) {
+	var cnftAddress = factoryContract.methods.get_cnft_by_index(_index).call(function(error, result) {
+		if (!error) {
+			var row = cnftFactoryTable.insertRow();
+			var th = document.createElement('th');
+			th.scope = 'row';
+			th.innerHTML = _index;
 
-	var formattedTokenPrice = web3.utils.toWei(tokenPrice);
-	console.log(formattedTokenPrice);
+			row.appendChild(th);
 
-	factoryContract.methods.deploy_rcnft_contract(tokenName, tokenSymbol, tokenURI, tokenSupply, formattedTokenPrice, tokenLock).send({'from': account})
-	.on('transactionHash', function(hash) {
-		console.log(hash);
-		deployButton.innerHTML = 'Deploying';
-		deployButton.disabled = true;
-	})
-	.on('confirmation', function(confirmationNumber, receipt) {
-		console.log(confirmationNumber);
-	})
-	.on('receipt', function(receipt) {
-		console.log(receipt);
-		var cnft_address = receipt.events.ConditionalNFTCreated.returnValues[0];
-		console.log(cnft_address);
-		window.location.replace('/purchase/' + cnft_address.toString());
-	})
-	.on('error', function(error, receipt) {
-		console.log(error);
-		deployButton.innerHTML = 'Deploy';
-		deployButton.disabled = false;
+			var td1 = document.createElement('td');
+			td1.innerHTML = result;
+			row.appendChild(td1);
+
+			var viewButton = document.createElement('a');
+			//viewButton.innerHTML = 'View';
+			viewButton.type = 'button';
+			viewButton.href = '/unlock/purchase/' + result.toString();
+			var viewButtonIcon = document.createElement('i');
+			viewButtonIcon.className = 'bi bi-arrow-right';
+			viewButton.appendChild(viewButtonIcon);
+			row.appendChild(viewButton);
+		} else {
+			console.log(error);
+		}
 	});
 }

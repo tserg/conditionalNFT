@@ -116,7 +116,7 @@ const _cnftABI = [
 	"type": "constructor"
   },
   {
-	"gas": 644149,
+	"gas": 784747,
 	"inputs": [
 	  {
 		"name": "_name",
@@ -139,7 +139,7 @@ const _cnftABI = [
 		"type": "uint256"
 	  },
 	  {
-		"name": "_preconditionAddress",
+		"name": "_lockAddress",
 		"type": "address"
 	  },
 	  {
@@ -162,7 +162,7 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 4306,
+	"gas": 1233,
 	"inputs": [
 	  {
 		"name": "_interfaceID",
@@ -180,11 +180,7 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"stateMutability": "payable",
-	"type": "fallback"
-  },
-  {
-	"gas": 2031,
+	"gas": 1941,
 	"inputs": [
 	  {
 		"name": "_owner",
@@ -202,7 +198,7 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 1495,
+	"gas": 1405,
 	"inputs": [
 	  {
 		"name": "_tokenId",
@@ -220,7 +216,7 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 2422,
+	"gas": 2332,
 	"inputs": [
 	  {
 		"name": "_tokenId",
@@ -238,7 +234,7 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 1758,
+	"gas": 1668,
 	"inputs": [
 	  {
 		"name": "_owner",
@@ -260,7 +256,7 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 7688,
+	"gas": 7670,
 	"inputs": [],
 	"name": "name",
 	"outputs": [
@@ -273,7 +269,7 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 6741,
+	"gas": 6723,
 	"inputs": [],
 	"name": "symbol",
 	"outputs": [
@@ -286,7 +282,7 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 9702,
+	"gas": 9684,
 	"inputs": [
 	  {
 		"name": "_tokenId",
@@ -304,7 +300,7 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 2827,
+	"gas": 2737,
 	"inputs": [],
 	"name": "totalSupply",
 	"outputs": [
@@ -317,7 +313,7 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 4940,
+	"gas": 4850,
 	"inputs": [
 	  {
 		"name": "_index",
@@ -335,7 +331,7 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 4559,
+	"gas": 4469,
 	"inputs": [
 	  {
 		"name": "_owner",
@@ -357,14 +353,27 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 4400,
+	"gas": 1448,
+	"inputs": [],
+	"name": "getLockAddress",
+	"outputs": [
+	  {
+		"name": "",
+		"type": "address"
+	  }
+	],
+	"stateMutability": "view",
+	"type": "function"
+  },
+  {
+	"gas": 2755,
 	"inputs": [
 	  {
 		"name": "_from",
 		"type": "address"
 	  }
 	],
-	"name": "isEligible",
+	"name": "isUnlocked",
 	"outputs": [
 	  {
 		"name": "",
@@ -375,7 +384,7 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 1095292,
+	"gas": 1089417,
 	"inputs": [
 	  {
 		"name": "_from",
@@ -440,7 +449,7 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 41139,
+	"gas": 41079,
 	"inputs": [
 	  {
 		"name": "_approved",
@@ -457,7 +466,7 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 38452,
+	"gas": 38392,
 	"inputs": [
 	  {
 		"name": "_operator",
@@ -474,7 +483,25 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 570957,
+	"gas": 565224,
+	"inputs": [
+	  {
+		"name": "_to",
+		"type": "address"
+	  }
+	],
+	"name": "mint",
+	"outputs": [
+	  {
+		"name": "",
+		"type": "bool"
+	  }
+	],
+	"stateMutability": "nonpayable",
+	"type": "function"
+  },
+  {
+	"gas": 568057,
 	"inputs": [],
 	"name": "purchase",
 	"outputs": [
@@ -487,7 +514,7 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 36481,
+	"gas": 36451,
 	"inputs": [],
 	"name": "withdraw",
 	"outputs": [],
@@ -495,7 +522,7 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 452928,
+	"gas": 453048,
 	"inputs": [
 	  {
 		"name": "_tokenId",
@@ -508,7 +535,7 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 1778,
+	"gas": 1748,
 	"inputs": [],
 	"name": "maxSupply",
 	"outputs": [
@@ -521,26 +548,13 @@ const _cnftABI = [
 	"type": "function"
   },
   {
-	"gas": 1808,
+	"gas": 1778,
 	"inputs": [],
 	"name": "minPrice",
 	"outputs": [
 	  {
 		"name": "",
 		"type": "uint256"
-	  }
-	],
-	"stateMutability": "view",
-	"type": "function"
-  },
-  {
-	"gas": 1838,
-	"inputs": [],
-	"name": "preconditionContractAddress",
-	"outputs": [
-	  {
-		"name": "",
-		"type": "address"
 	  }
 	],
 	"stateMutability": "view",
@@ -568,7 +582,7 @@ verifyTokenLockButton.addEventListener('click', async() => {
 	var verifyLockAddress = document.querySelector('#verify-lock-address').value;
 	console.log(verifyLockAddress);
 
-	cnftContract.methods.isEligible(verifyLockAddress).call()
+	cnftContract.methods.isUnlocked(verifyLockAddress).call()
 	.then(function(result) {
 		if (result === true) {
 			verifyTokenLockResult.innerHTML = 'This address is eligible to purchase, hold, transfer and receive this cNFT.';
@@ -681,7 +695,7 @@ async function populateInfo() {
 		tokenPrice.innerHTML = web3.utils.fromWei(result).toString() + ' ETH';
 	});
 
-	cnftContract.methods.preconditionContractAddress().call()
+	cnftContract.methods.getLockAddress().call()
 	.then(function(result) {
 		if (result === '0x0000000000000000000000000000000000000000') {
 			result = 'None';

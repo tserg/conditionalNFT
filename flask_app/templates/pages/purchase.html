@@ -29,7 +29,7 @@
 
 <div class="row justify-content-md-center my-2">
 	<div class="col-2">
-		<span class="fw-bold">Token Lock: </span>
+		<span class="fw-bold">Underlying Token: </span>
 	</div>
 	<div class="col-4">
 		<span id="token-lock-address"></span>
@@ -121,7 +121,7 @@
 
 <div class="row justify-content-md-center my-2">
 	<div class="col-2 mb-3">
-		<label for="verify-lock-address" class="form-label fw-bold">Verify Lock for address</label>
+		<label for="verify-lock-address" class="form-label fw-bold">Verify eligibility</label>
 	</div>
 	<div class="col-4">
 		<input type="text" class="form-control" id="verify-lock-address">
@@ -151,10 +151,6 @@
 		<button type="button" class="btn btn-primary" id='purchase-btn'>Purchase</button>
 	</div>
 </div>
-<!-- Proxy element for factory addresses --->
-<meta property="development-cnft-address" content={{ cnft_factory_addresses.development }}>
-<meta property="rinkeby-cnft-address" content={{ cnft_factory_addresses.rinkeby }}>
-<meta property="mainnet-cnft-address" content={{ cnft_factory_addresses.mainnet }}>
 
 
 <!-- Proxy element for cNFT address --->
