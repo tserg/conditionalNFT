@@ -641,21 +641,6 @@ def _mint(_to: address) -> bool:
 
     return True
 
-@external
-def mint(_to: address) -> bool:
-    """
-    @dev Function to mint tokens
-         Throws if `msg.sender` is not the minter.
-         Throws if `_to` is zero address.
-         Throws if `_tokenId` is owned by someone.
-    @param _to The address that will receive the minted tokens.
-    @return A boolean that indicates if the operation was successful.
-    """
-    # Throws if `msg.sender` is not the minter
-    assert msg.sender == self.minter
-
-    return self._mint(_to)
-
 @payable
 @external
 def purchase() -> bool:
